@@ -1,0 +1,28 @@
+{%extends 'blog/layout.html'%}
+{%block content%}
+
+
+<div class="row">
+    
+
+{% if latest_post_list %}
+
+{% for post in latest_post_list %}
+<div class="col-md-4">
+	<h4 class="col-md-12">
+	<a href="/blog/{{post.id}}">{{post.title}}</a> ( {{ post.pub_date }} )
+	
+	
+	</h4>
+	
+</div>
+{%endfor%}
+
+{%else%}
+<p>No posts available.</p>
+{%endif%}
+</div>
+
+
+
+{%endblock%}

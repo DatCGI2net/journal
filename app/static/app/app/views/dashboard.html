@@ -1,0 +1,224 @@
+<div ng-controller="DashboardCtrl">
+
+<div class="page-heading">
+    <h1>Dashboard</h1>
+	
+	
+    <div class="col-md-8 pull-right">
+        <div class="form-group">
+			<div class="col-md-4 ">
+			</div>
+            <div class="col-md-3 ">
+				<p>MONTH</p>
+                <div class="input-group">
+				
+				<div class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="open($event)"><i
+                                class="ti ti-calendar"></i></button>
+                    </div>
+                    <input readonly type="text"
+                           placeholder="Monat / Jahr"
+                           class="form-control datepicker"
+                           max-date="maxDate"
+                           datepicker-popup="{$ format $}"
+                           ng-model="date"
+                           is-open="opened"
+                           datepicker-options="dateOptions"
+                           datepicker-mode="'month'"
+                           ng-change="balance.change(date)"
+                           ng-click="open($event)"
+                           ng-required="true" 
+						   placeholder="MONAT"
+						   show-button-bar="false"
+						   date-disabled="disabled(date, mode)"
+						   />
+                    
+                </div>
+            </div>
+            <div class="col-md-5">
+				<p>BEGINNING BALANCE</p>
+                <div class="input-group">
+									<span class="input-group-addon">
+										<i class="fa fa-eur"></i>
+									</span>
+                    <input
+                            type="text"
+                            disabled
+                            class="form-control"
+                            ui-number-mask="2"
+                            ng-model='balance.balance'
+                            placeholder="10.000,00"
+                            >
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel" data-widget='{"draggable": "false"}'>
+                <div class="panel-heading">
+                    <div class="panel-ctrls button-icon"
+                         data-actions-container=""
+                         data-action-collapse='{"target": ".panel-body"}'
+                            >
+                    </div>
+                    <h2>Entries</h2>
+                </div>
+                <div class="panel-editbox" data-widget-controls=""></div>
+                <div class="panel-body">
+                    <div class="row">
+						
+						
+						
+						
+                        <div class="col-md-12 mb-md">
+                            <button class="btn btn-success pull-right btn-lg" ng-click="entry.newEntry(entry.entryLastdate, balance.id)" ng-disabled="balance.isclosed">Add Entry</button>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <div class="col-md-12" ng-show="currentPageEntries.length>0">
+                            <table style="margin-bottom: 0px" class="table  table-responsive table-striped">
+                                <tr>
+                                    <th>Index</th>
+                                    <!--<th></th>-->
+                                    <th>Tag</th>
+                                    <th>Beleg Nr</th>
+                                    <th>USt-Code</th>
+                                    <th>UIDNr Lieferant / Kunde</th>
+                                    <th>Text</th>
+                                    <th>OP Belegnr</th>
+                                    <th>Kostenstelle</th>
+                                    <th>%Satz</th>
+                                    <th class="form-control-figure">Eingang</th>
+                                    <th class="form-control-figure">Ausgang</th>
+                                    <th class="form-control-figure">Skonto</th>
+                                    <th class="form-control-figure">Saldo</th>
+                                    <th></th>
+                                </tr>
+                                <tr data-ng-repeat="ent in currentPageEntries | limitTo:numPerPage"  >
+                                    <td class="pt-md pb-md">
+									<i ng-class="{'fa fa-arrow-right   text-success':ent.eingang>0, 'fa fa-arrow-left   text-danger':ent.eingang<=0}">
+									</i>
+                                        {$ $index+1 $}
+										
+										
+                                    </td class="pt-md pb-md">
+                                    <!--<td>
+                                        <i class="fa fa-bell"></i>
+                                    </td>-->
+                                    <td class="pt-md pb-md">
+                                        {$ formatDate(ent.tag) | date : 'dd.MM.yyyy' $}
+                                    </td>
+                                    <td class="pt-md pb-md">
+                                        {$ ent.beleg $}
+                                    </td>
+                                    <td class="pt-md pb-md">
+                                        {$ ent.ust_code $}
+                                    </td>
+                                    <td class="pt-md pb-md">
+                                        {$ ent.uid_lieferant_kunde $}
+                                    </td>
+                                    <td class="pt-md pb-md">
+                                        {$ ent.text $}
+                                    </td>
+                                    <td class="pt-md pb-md">
+                                        {$ ent.op_beleg $}
+                                    </td>
+                                    <td class="pt-md pb-md">
+                                        {$ ent.kostenstelle $}
+                                    </td>
+                                    <td class="pt-md pb-md">
+                                        {$ ent.steuersatz $}
+                                    </td>
+                                    <td class="pt-md pb-md" align="right">
+                                        {$ ent.ausgang>0?'':(ent.eingang|currency:'&euro;') $}
+                                    </td>
+                                    <td class="pt-md pb-md" align="right">
+                                        {$ ent.eingang>0?'':(ent.ausgang|currency:'&euro;') $}
+                                    </td>
+                                    <td class="pt-md pb-md" align="right">
+                                        {$ ent.skonto>0?(ent.skonto|currency:'&euro;'):'' $}
+                                    </td>
+                                    <td align="right" class="pt-md pb-md">
+                                        {$ ent.saldo|currency:'&euro;' $}
+                                    </td>
+
+                                    <td style="text-align: center;" class="pt-md pb-md">
+                                        <a ng-show="!balance.isclosed"
+                                                ng-click="entry.editEntry(ent.id)"
+                                                tooltip-placement="top"
+                                                tooltip="Edit Entry"
+                                                tooltip-popup-delay='250'
+                                                >
+                                            <i class="fa fa-pencil"></i></a>&nbsp;
+                                        <a ng-show="!balance.isclosed" 
+                                                ng-click="entry.deleteEntry(ent.id)"
+                                                tooltip-placement="top"
+                                                tooltip="Delete Entry!"
+                                                tooltip-popup-delay='250'
+                                                >
+                                            <i class="fa fa-remove"></i></a>
+                                    </td>
+                                </tr>
+                            
+                            
+                            
+                                <tr class="entry-summary-row">
+                                    <td class="pb-lg pt-lg" colspan=9 align="right"><strong>Summary</strong></td>
+                                    <td class="pb-lg pt-lg" align="right">{$ totals.eingang |currency:'&euro;' $}</td>
+                                    <td class="pb-lg pt-lg" align="right">{$ totals.ausgang |currency:'&euro;' $}</td>
+                                    <td class="pb-lg pt-lg" align="right">{$ totals.skonto |currency:'&euro;' $}</td>
+                                    <td class="pb-lg pt-lg" align="right">{$ totals.saldo |currency:'&euro;' $}</td>
+                                    <td class="pb-lg pt-lg"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-12" ng-hide="currentPageEntries.length>0">
+                            <div class="alert alert-info">
+                                Still No entries added
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="panel-footer" ng-show="currentPageEntries.length>0">
+                    <div class="row">
+                        <div class="col-md-12 col-xs-12 pull-right">
+						
+                            
+                        
+                            <button class="btn btn-success btn-lg pull-right ml-sm"  ng-click="balance.close(balance.id)" ng-disabled="balance.isclosed" ><i
+                                    ng-class="{'fa fa-unlock': !balance.isclosed,'fa fa-lock':  balance.isclosed}"></i> &nbsp; Completing Month
+                            </button>
+							
+							<button class="btn btn-success btn-lg pull-right" ng-disabled="!balance.isclosed" ng-click="entry.export(balance.id)"><i
+                                    class="fa fa-arrow-circle-down"></i> &nbsp; Download CSV
+                            </button>
+					
+                        </div>
+						
+						<div class="col-md-12 pull-right hidden">
+                            <pagination class="pagination pull-right"
+                                        ng-model="currentPage"
+                                        total-items="entries.length"
+                                        max-size="5"
+                                        ng-change="select(currentPage)"
+                                        items-per-page="numPerPage"
+                                        rotate="false"
+                                        boundary-links="true">
+                            </pagination>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- container-fluid -->
+
+
+</div>
+

@@ -1,0 +1,32 @@
+{%extends 'blog/layout.html'%}
+{%block content%}
+<div class="post">
+<h1>{{post.title}}</h1>
+<div class="desc">
+{{post.text}}
+</div>
+
+{% if comment_count %}
+<div class="comments"><span>{{comment_count}} comments</span>
+{% for comment in comments%}
+<p class="comment">{{comment.comments}} - {{comment.comment_date}} - by {{comment.commenter.username}}</p>
+{%endfor%}
+
+</div>
+
+{%endif%}
+<div class="comment">
+{%if user.is_authenticated %}
+<form action="{%url 'comment' post.id%}" method=post>
+{%csrf_token%}
+<textarea cols=10 rows=4 name="comments"></textarea>
+<input type=submit value="Comment">
+</form>
+{%else%}
+<a href="accounts/login">Login to comment</a>
+{%endif%}
+</div>
+
+</div>
+
+{%endblock%}
