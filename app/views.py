@@ -530,8 +530,8 @@ class APIAuthView(views.APIView):
 		password=user['password']
 		##return Response({'email':username, 'pw':password})
 		
-		#username='test@cgto.net'
-		#password='thu1999dat'
+		#username='test@cgito.net'
+		#password='test12345'
 		##return Response({'email':username, 'pw':password})
 		user = authenticate(username = username, password = password)
 		##return Response(UserSerializer(user).data)
